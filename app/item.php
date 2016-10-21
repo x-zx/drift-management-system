@@ -4,7 +4,21 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class item extends Model
+class Item extends Model
 {
-    //
+    protected $guarded = ['id'];
+
+    protected $hidden = ['code'];
+
+    public function user(){
+        return $this->owner();
+    }
+
+    public function owner(){
+        return $this->belongsTo('User','owner_user_id');
+    }
+
+    public function holder(){
+        return $this->belongsTo('User','holder_user_id');
+    }
 }
