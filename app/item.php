@@ -15,10 +15,18 @@ class Item extends Model
     }
 
     public function owner(){
-        return $this->belongsTo('User','owner_user_id');
+        return $this->belongsTo('App\User','owner_user_id');
     }
 
     public function holder(){
-        return $this->belongsTo('User','holder_user_id');
+        return $this->belongsTo('App\User','holder_user_id');
+    }
+
+    public function transfers(){
+        return $this->hasMany('App\Transfer');
+    }
+
+    public function transfered_users(){
+        return Transfer::where('to_user_id','=',$this->user_id);
     }
 }

@@ -17,6 +17,7 @@ class InitUsers extends Migration
             $table->string('name');
             $table->string('password');
             $table->string('openid');
+            $table->unique('openid');
             $table->integer('star');
             $table->string('email');
             $table->string('class');

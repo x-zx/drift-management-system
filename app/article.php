@@ -9,10 +9,10 @@ class Article extends Model
     protected $guarded = ['id'];
 
     public function user(){
-        return $this->belongsTo('User');
+        return $this->belongsTo('App\User');
     }
 
     public function item(){
-        return $this->belongsTo('Item')
+        return $this->belongsTo('App\Item')
     }
 }
