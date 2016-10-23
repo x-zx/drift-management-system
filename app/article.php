@@ -13,6 +13,10 @@ class Article extends Model
     }
 
     public function item(){
-        return $this->belongsTo('App\Item')
+        return $this->belongsTo('App\Item');
+    }
+
+    public function class($name){
+        return Article::where('class','=',$name)->get();
     }
 }

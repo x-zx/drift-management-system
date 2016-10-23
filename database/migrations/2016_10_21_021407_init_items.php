@@ -19,7 +19,7 @@ class InitItems extends Migration
             $table->integer('owner_user_id')->unsigned();
             $table->integer('holder_user_id')->unsigned();
             $table->string('des');
-            $table->string('photo');
+            $table->text('photo');
             $table->boolean('transfer');
             $table->string('code');
             $table->timestamps();

@@ -16,6 +16,7 @@ class InitArticles extends Migration
             $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->integer('item_id')->unsigned();
+            $table->string('class');
             $table->string('title');
             $table->text('content');
             $table->timestamps();

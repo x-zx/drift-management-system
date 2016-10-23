@@ -17,12 +17,12 @@ class UsersController extends Controller
         //     }
         //     //dd([$user->name, $user->own_items()]);
         // }
-        $user = \App\User::findOpenid('fd42a186aee358562d66dc063f7ebcd3');
-        $r = new \App\Recommend;
-        $r->name = "三体";
-        $users = $r->finished_users;
-
-        dd($users);
+        //$user = \App\User::findOpenid('fd42a186aee358562d66dc063f7ebcd3');
+        $r = \App\Recommend::find(1);
+        //dd($r);
+        $users = $r->finished_users();
+        echo $users->toJson();
+        //dd($users);
     }
 
     public function create(){
@@ -36,5 +36,6 @@ class UsersController extends Controller
     public function store(){
         
     }
+
 
 }

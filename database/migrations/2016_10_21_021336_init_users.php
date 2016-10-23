@@ -23,6 +23,7 @@ class InitUsers extends Migration
             $table->string('class');
             $table->string('contact');
             $table->boolean('admin');
+            $table->string('agent');
             $table->rememberToken();
             $table->timestamps();
         });

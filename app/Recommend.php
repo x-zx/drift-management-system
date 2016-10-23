@@ -9,12 +9,18 @@ class Recommend extends Model
     protected $guarded = ['id'];
 
     public function items(){
-        return Item::where('name','like',"%{$this->name}%");
+        return Item::where('name','like',"%{$this->name}%")->get();
     }
 
     public function finished_users(){
-        $items = Item::where('name','like',"%{$this->name}%");
-        return $items->transfered_users;
+        $items = $this->items();
+        foreach($items as $item){
+            $transfers = $item->transfers;
+            foreach($transfers as $transfer){
+                $users[] = $transfer->to_user_id;
+            }
+        }
+        return User::find($users);
     }
 
 }

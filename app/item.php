@@ -26,7 +26,9 @@ class Item extends Model
         return $this->hasMany('App\Transfer');
     }
 
-    public function transfered_users(){
-        return Transfer::where('to_user_id','=',$this->user_id);
+    public function setCodeAttribute($code)
+    {
+        $this->attributes['code'] =strtoupper(dechex(intval(time().$this->id)));
     }
+
 }

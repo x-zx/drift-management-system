@@ -33,4 +33,8 @@ class User extends Model
         return User::where('openid','=',$openid);
     }
 
+    public function setAgentAttribute($agent){
+        $this->attributes['agent'] = $_SERVER['HTTP_USER_AGENT'];
+    }
+
 }

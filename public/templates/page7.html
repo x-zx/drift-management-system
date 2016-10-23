@@ -1,0 +1,48 @@
+<ion-view title="发布图书" id="page7">
+	<ion-content padding="true" class="has-header">
+		<form id="page7-form5" class="list">
+			<label class="item item-input" id="page7-input10">
+        <span class="input-label">书名</span>
+        <input type="text" placeholder="">
+      </label>
+			<label class="item item-input item-stacked-label" id="page7-input11">
+        <span class="input-label">介绍</span>
+        <input type="text" placeholder="">
+      </label>
+			<div onclick="_file.click()" style="margin: 0px;  background-color: rgb(232, 235, 239); text-align: center;">
+				
+				 <img id="photo" width="100%" src="img/picture.png" style="color: rgb(136, 136, 136); vertical-align: middle;" />
+
+			</div>
+			<label class="item item-select" id="page7-select1">
+        <span class="input-label">漂流时间</span>
+        <select>
+          <option>1个月</option>
+        </select>
+      </label>
+			<ion-toggle toggle-class="toggle-positive" ng-checked="true" id="page7-toggle2">允许多次漂流</ion-toggle>
+			<button id="page7-button9" class="button button-positive  button-block">发布</button>
+		</form>
+	</ion-content>
+</ion-view>
+<input type="file" id="_file" onchange="file_change(this)"/>
+<!--<script>
+    $(function() { 
+    $('#_file').change(function() { 
+        var file = this.files[0]; 
+        var r = new FileReader(); 
+        r.readAsDataURL(file); 
+        $(r).on('load',function() { 
+            $.post("upload.php",
+            {
+                data:this.result,
+            },
+            function(data,status){
+                json = jQuery.parseJSON(data);
+                $("#photo").attr("src",json.url);
+                //alert(json.code);
+            });          
+        }) 
+    }) 
+})
+</script>-->

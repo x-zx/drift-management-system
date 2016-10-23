@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class InitRecommend extends Migration
+class InitSettings extends Migration
 {
     /**
      * Run the migrations.
@@ -12,12 +12,15 @@ class InitRecommend extends Migration
      */
     public function up()
     {
-        Schema::create('recommends', function (Blueprint $table) {
+        Schema::create('settings', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->timestamp('expired_at')->useCurrent();
-            $table->timestamps();
+            $table->unique('name');
+            $table->string('content');
+            $table->string('comment');
         });
+
+
     }
 
     /**
@@ -27,6 +30,6 @@ class InitRecommend extends Migration
      */
     public function down()
     {
-        Schema::drop('recommends');
+        Schema::drop('settings');
     }
 }
