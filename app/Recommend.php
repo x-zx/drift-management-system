@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Recommend extends Model
 {
@@ -14,6 +15,7 @@ class Recommend extends Model
 
     public function finished_users(){
         $items = $this->items();
+        $users = [];
         foreach($items as $item){
             $transfers = $item->transfers;
             foreach($transfers as $transfer){
@@ -22,5 +24,10 @@ class Recommend extends Model
         }
         return User::find($users);
     }
+    
+    // public function scopeValid($query)
+    // {
+    //     $query->where('expired_at','>=',Carbon::now());
+    // }
 
 }

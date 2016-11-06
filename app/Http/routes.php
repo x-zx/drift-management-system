@@ -11,9 +11,9 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
 /*
 |--------------------------------------------------------------------------
@@ -26,10 +26,24 @@ Route::get('/', function () {
 |
 */
 
-Route::group(['middleware' => ['web']], function () {
-    //
+Route::group(['middleware' => ['web','OpenAuth']], function () {
+    //Route::controller('/','HomeController');
+    Route::get('/','HomeController@getIndex');
+    Route::controller('/home','HomeController');
+    Route::controller('/item','ItemController');
+    Route::controller('/article','ArticleController');
+    Route::controller('/user','UserController');
+    
+    Route::controller('/transfer','TransferController');
+
+    Route::controller('/admin','AdminController');
 });
 
+
 //Route::resource('articles','ArticlesController');
-Route::resource('users','UsersController');
-Route::resource('items','ItemsController');
+//Route::resource('users','UsersController');
+//Route::resource('items','ItemsController');
+//Route::resource('articles','ArticlesController');
+//Route::resource('recommends','RecommendsController');
+
+

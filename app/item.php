@@ -13,7 +13,7 @@ class Item extends Model
     public function user(){
         return $this->owner();
     }
-
+    
     public function owner(){
         return $this->belongsTo('App\User','owner_user_id');
     }

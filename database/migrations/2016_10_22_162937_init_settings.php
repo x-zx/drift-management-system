@@ -18,6 +18,7 @@ class InitSettings extends Migration
             $table->unique('name');
             $table->string('content');
             $table->string('comment');
+            $table->timestamps();
         });
 
 
