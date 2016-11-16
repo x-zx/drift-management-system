@@ -121,8 +121,8 @@
                     <ion-item class="item-thumbnail-left item">
                         <img ng-src="@{{item.photo}}">
                         <h2>@{{item.name}}</h2>
-                        <p> 主人:@{{item.user_name}}</p>
-                        <p> 有效期:@{{item.expired_at}}</p>
+                        <p> 主人：@{{item.user_name}}</p>
+                        <p> 有效期：@{{item.date}}</p>
                     </ion-item>
                 </div>
             </ion-list>
@@ -147,9 +147,14 @@
 
                 </div>
             </ion-list>
-           
-            <a class="button button-positive  button-block button-clear" href="#/post/@{{item.id}}">分享心得</a>
+          
             <button class="button button-positive  button-block" ng-click="request()">申请借书</button>
+
+             <div class="button-bar bar-clear">
+           <a class="button button-clear button-positive" href="#/post/@{{item.id}}">分享心得</a>
+           <a class="button button-clear button-positive" ng-click="reTime()">刷新漂流时间</a>
+           </div>
+
              </ion-content>
         </ion-view>
     </script>
@@ -160,9 +165,39 @@
                     <label class="item item-input">
                         <input id="name" ng-model="user.name" type="text" placeholder="名字">
                     </label>
-                    <label class="item item-input">
+
+   <div class="item item-input item-select">
+
+    <div class="input-label">
+      学校
+    </div>
+    <select ng-model="class.c1.code" ng-change="classChange()" ng-options="c1.code as c1.name for c1 in class.list.c1">
+    </select>
+  </div>
+
+   <div class="item item-input item-select">
+
+    <div class="input-label">
+      年级
+    </div>
+    <select ng-model="class.c2.code" ng-change="classChange()" ng-options="c2.code as c2.name for c2 in class.list.c2">
+    </select>
+  </div>
+
+     <div class="item item-input item-select">
+
+    <div class="input-label">
+      班级
+    </div>
+    <select ng-model="class.c3.code" ng-change="classChange()" ng-options="c3.code as c3.name for c3 in class.list.c3">
+    </select>
+  </div>
+
+
+
+           <!--          <label class="item item-input">
                         <input id="class" ng-model="user.class" type="text" placeholder="班级">
-                    </label>
+                    </label> -->
                     <label class="item item-input">
                         <input id="email" ng-model="user.email" type="text" placeholder="邮箱">
                     </label>
@@ -257,6 +292,7 @@
 
                 </div>
                 <a href="#/item_edit" class="button icon-left ion-android-add-circle button-block button-positive">发布图书</a>
+                <a class="button button-positive  button-block button-clear" href="javascript:location.reload()">刷新</a>
             </ion-content>
         </ion-view>
     </script>
@@ -277,11 +313,11 @@
      <script id="templates/request.html" type="text/ng-template">
         <ion-view title="编辑文章" ng-controller="RequestController">
             <div class="list">
-                <a class="item" href="#" ng-repeat="request in requests">
+                <a class="item" ng-repeat="request in requests" ng-click="showPopup(@{{request.id}})">
                   <!-- <img src="venkman.jpg"> -->
-                  <h2><strong>@{{request.item_name}}</strong></h2>
-                  <p>来自 @{{request.user_class}}@{{request.user_name}}的申请 </p>
-                  <p>邮箱：@{{request.user_email}} 电话：@{{request.user_contact}}</p>
+                  <h2><strong>@{{request.item.name}}</strong></h2>
+                  <p>@{{request.from_user.class}}@{{request.from_user.name}}→@{{request.to_user.class}}@{{request.to_user.name}}</p>
+                  <p>有效期：@{{request.item.htime}} 交付方式:@{{request.trans_way}}</p>
                 </a>
             </div>
         </ion-view>

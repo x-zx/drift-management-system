@@ -21,6 +21,7 @@ class InitItems extends Migration
             $table->string('des');
             $table->text('photo');
             $table->boolean('transfer');
+            $table->boolean('shelves');
             $table->string('code');
             $table->timestamps();
             $table->foreign('owner_user_id')->references('id')->on('users');

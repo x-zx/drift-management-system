@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="../css/templatemo_main.css">
 </head>
 <body>
+
   <div id="main-wrapper">
     <div class="navbar navbar-inverse" role="navigation">
       <div class="navbar-header">
@@ -51,10 +52,10 @@
            <div class="row">
             <div class="col-md-6 margin-bottom-15">
               <label>{{ $setting->comment }}</label>
-              <input type="text" class="form-control" name="{{ $setting->name }}" value="{{ $setting->content }}" placeholder="{{ $setting->comment }}">  
+              <textarea class="form-control" name="{{ $setting->name }}" placeholder="{{ $setting->comment }}" rows=1>{{ $setting->content }}</textarea>
             </div>
             </div>
-           @endforeach    
+           @endforeach
            <button type="submit" class="btn btn-primary">保存</button>
            {!! csrf_field() !!}       
           </form>
@@ -69,8 +70,39 @@
       </footer>
     </div>
 </div>
-    <script src="js/jquery.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/templatemo_script.js"></script>
+    <script src="http://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+    <script src="http://cdn.bootcss.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js"></script>
+    <!-- <script src="js/templatemo_script.js"></script> -->
+    <script>
+(function($){
+    $.fn.autoTextarea = function(options) {
+        var defaults={
+            maxHeight:null,//文本框是否自动撑高，默认：null，不自动撑高；如果自动撑高必须输入数值，该值作为文本框自动撑高的最大高度
+            minHeight:$(this).height()
+        };
+        var opts = $.extend({},defaults,options);
+        return $(this).each(function() {
+            $(this).bind("paste cut keydown keyup focus blur",function(){
+                var height,style=this.style;
+                this.style.height = opts.minHeight + 'px';
+                if (this.scrollHeight > opts.minHeight) {
+                    if (opts.maxHeight && this.scrollHeight > opts.maxHeight) {
+                        height = opts.maxHeight;
+                        style.overflowY = 'scroll';
+                    } else {
+                        height = this.scrollHeight;
+                        style.overflowY = 'hidden';
+                    }
+                    style.height = height + 'px';
+                }
+            });
+        });
+    };
+})(jQuery);
+
+$(".form-control").autoTextarea({
+        maxHeight: 300,//文本框是否自动撑高，默认：null，不自动撑高；如果自动撑高必须输入数值，该值作为文本框自动撑高的最大高度
+});
+</script>
   </body>
 </html>

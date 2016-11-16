@@ -48,6 +48,35 @@
           </ol>
 
            <div class="table-responsive">
+
+            <div id="print" style="display:none">
+            <table class="table table-striped table-hover table-bordered">
+            <thead>
+                <tr>
+                  <th>#</th>
+                  <th>名称</th>
+                  <th>用户</th>
+                  <th>发布时间</th>
+                  <th>二维码</th>
+                </tr>
+              </thead>
+              <tbody>
+
+                  @foreach ($items as $item)
+                    <tr>
+                      <td>{{ $item->id }}</td>
+                      <td>{{ $item->name }}</td>
+                      <td>{{ $item->user->name }}<br>[{{ $item->user->class }}]</td>
+                      <td>{{ $item->created_at }}</td>
+                      <td><img width="100px" src="http://qr.liantu.com/api.php?text={{ $item->code }}"></td>
+                    </tr>
+                  @endforeach           
+                          
+                  </tbody>
+
+            </table>
+            </div>
+
                 <table class="table table-striped table-hover table-bordered">
                   <thead>
                   
@@ -57,6 +86,7 @@
                       <th>用户</th>
                       <th>发布时间</th>
                       <th>二维码</th>
+                      <th>上架</th>
                       <th>删除</th>
                     </tr>
                   
@@ -67,15 +97,18 @@
                     <tr>
                       <td>{{ $item->id }}</td>
                       <td>{{ $item->name }}</td>
-                      <td>{{ $item->user->name }}</td>
+                      <td>{{ $item->user->name }}<br>[{{ $item->user->class }}]</td>
                       <td>{{ $item->created_at }}</td>
                       <td><img width="100px" src="http://qr.liantu.com/api.php?text={{ $item->code }}"></td>
+                      <td><a href="putitem?id={{ $item->id }}" class="btn btn-link">{{ $item->shelves ? '已上架' : '已下架' }}</a></td>
                       <td><a href="delitem?id={{ $item->id }}" class="btn btn-link">Delete</a></td>
                     </tr>
                   @endforeach           
                           
                   </tbody>
                 </table>
+                
+                <span class="btn btn-success" id="printBtn"><a href="#">打印</a></span>
                 <ul class="pagination pull-right">
                 {!! $items->links() !!}
               </ul>  
@@ -91,8 +124,18 @@
       </footer>
     </div>
 </div>
-    <script src="js/jquery.min.js"></script>
+   
+    <script src="http://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+    <script src="http://cdn.bootcss.com/jQuery.print/1.5.0/jQuery.print.min.js"></script>
+<!--     
     <script src="js/bootstrap.min.js"></script>
-    <script src="js/templatemo_script.js"></script>
+    <script src="js/templatemo_script.js"></script> -->
+     <script>
+      $("#printBtn").click(function(){
+        $("#print").show();
+        $("#print").print();
+        $("#print").hide();
+      });
+    </script>
   </body>
 </html>

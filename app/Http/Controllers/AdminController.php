@@ -44,16 +44,26 @@ class AdminController extends Controller
    	public function getItems(Request $request){
    		//$input = $request->input();
    		//$page = $input['page'];
-   		$items = \App\Item::latest()->paginate(10);
+   		$items = \App\Item::latest()->paginate(8);
 
    		return view('admin.items',compact('items'));
    	}
 
    	public function getDelitem(Request $request){
    		$input = $request->input();
-   		$item = \App\Item::find($input['id'])->first();
+   		$item = \App\Item::where(['id'=>$input['id']])->first();
    		if($item)$item->delete();
    		return redirect()->back();
+   	}
+
+   	public function getPutitem(Request $request){
+	$input = $request->input();
+	$item = \App\Item::where(['id'=>$input['id']])->first();
+	if($item){
+		$item->shelves = !$item->shelves;
+		$item->save();
+	}
+	return redirect()->back();
    	}
 
 
