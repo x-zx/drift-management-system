@@ -313,11 +313,13 @@
      <script id="templates/request.html" type="text/ng-template">
         <ion-view title="编辑文章" ng-controller="RequestController">
             <div class="list">
-                <a class="item" ng-repeat="request in requests" ng-click="showPopup(@{{request.id}})">
+                <a class="item item-icon-right" ng-repeat="request in requests" ng-click="@{{ request.isholder ? 'showPopup(' + request.id + ')'  : ''}}">
                   <!-- <img src="venkman.jpg"> -->
-                  <h2><strong>@{{request.item.name}}</strong></h2>
+                  <h2><strong>@{{request.item.name}}</strong> <span ng-if="request.accept" class="ion-ios-checkmark"></span></h2>
                   <p>@{{request.from_user.class}}@{{request.from_user.name}}→@{{request.to_user.class}}@{{request.to_user.name}}</p>
-                  <p>有效期：@{{request.item.htime}} 交付方式:@{{request.trans_way}}</p>
+                  <!-- <p ng-if="request.accept">有效期：@{{request.item.htime}}</p> -->
+                  <p>@{{request.state}}</p>
+                  
                 </a>
             </div>
         </ion-view>

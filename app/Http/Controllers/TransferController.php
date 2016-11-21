@@ -55,8 +55,44 @@ class TransferController extends Controller
                 $from_user = \App\User::find($transfer->from_user_id);
                 $item = \App\Item::find($transfer->item_id);
                 Carbon::setLocale('zh');
-                $item->htime = Carbon::parse($item->expired_at)->diffForHumans();
+                $htime = Carbon::parse($item->expired_at)->diffForHumans();
                 unset($item['des']);
+
+                if(boolval($transfer->accept)){
+                    //申请已确认
+                    if($transfer->from_user_id == $user->id){
+                        //漂出人自己
+                        $state = '已取书，还书时间：' . $htime;
+                    }else{
+
+                        if($item->owner_user_id == $user->id){
+                            //自己是拥有者
+                            $state = '确认归还';
+                        }else{
+                            $state = '已取书，还书时间：' . $htime;
+                        }
+                    }
+                }else{
+                    if($transfer->from_user_id == $user->id){
+                        //漂出人自己
+                        if(empty($transfer->trans_way)){
+                            $state = '收到申请，请约定交付方式';
+                        }else{
+                            $state = '已同意，交付方式：' . $transfer->trans_way;
+                        }
+                        
+                    }else{
+                        if(empty($transfer->trans_way)){
+                            $state = '发起申请，等待约定交付方式';
+                        }else{
+                            $state = '已同意，交付方式：' . $transfer->trans_way;
+                        }
+                        
+                    }
+
+                    
+                }
+
                 $trans_list[] = [
                     'id'=>$transfer->id,
                     'time'=>$transfer->created_at->toDateString(),
@@ -64,7 +100,9 @@ class TransferController extends Controller
                     'from_user'=>$from_user,
                     'item'=> $item,
                     'trans_way'=>$transfer->trans_way,
-                    'accept'=>boolval($transfer->accept)
+                    'accept'=>boolval($transfer->accept),
+                    'isholder'=>$transfer->from_user_id == $user->id,
+                    'state'=>$state,
                 ];
                 //var_dump($transfer);
 
@@ -138,8 +176,7 @@ class TransferController extends Controller
         $code = $input['code'];
         $item = \App\Item::where('code','=',$code)->first();
 
-        Carbon::setLocale('zh');
-        $item->htime = Carbon::parse($item->expired_at)->diffForHumans();
+        
 
         $owner_user = \App\User::find($item->owner_user_id);
         $holder_user = \App\User::find($item->holder_user_id);
@@ -249,6 +286,8 @@ class TransferController extends Controller
         //     $msg = '无法识别';
         // }
         out:
+        Carbon::setLocale('zh');
+        $item->htime = Carbon::parse($item->expired_at)->diffForHumans();
         echo @json_encode(['msg'=>$msg,'item_id'=>$item->id, 'item_name'=>$item->name, 'item_des'=>$item->des]);
     }
     
