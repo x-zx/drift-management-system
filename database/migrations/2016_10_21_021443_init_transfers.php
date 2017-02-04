@@ -21,9 +21,9 @@ class InitTransfers extends Migration
             $table->timestamp('trans_at');
             $table->boolean('accept');
             $table->timestamps();
-            $table->foreign('item_id')->references('id')->on('items');
-            $table->foreign('form_user_id')->references('id')->on('users');
-            $table->foreign('to_user_id')->references('id')->on('users');
+            // $table->foreign('item_id')->references('id')->on('items');
+            // $table->foreign('form_user_id')->references('id')->on('users');
+            // $table->foreign('to_user_id')->references('id')->on('users');
         });
     }
 

@@ -38,6 +38,7 @@ Route::group(['middleware' => ['web','OpenAuth']], function () {
     Route::controller('/transfer','TransferController');
 
     Route::controller('/admin','AdminController');
+    Route::controller('/wechat','WechatController');
 });
 
 

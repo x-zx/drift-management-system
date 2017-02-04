@@ -41,6 +41,33 @@ class TransferController extends Controller
     	echo json_encode($transfers_log);
     }
 
+    public function getItemlist(Request $request){
+        $openid = $request->session()->has('openid') ? $request->session()->get('openid') : '';
+        $user = \App\User::findOpenid($openid);
+        $transfers = \App\Transfer::where('to_user_id','=',$user->id)->where('accept','=','1')->groupBy('item_id')->latest()->get();
+        $used_item = [];
+        $my_item   = [];
+        $hold_item = [];
+
+        foreach ($transfers as $transfer){
+            if($transfer->item->owner_user_id != $user->id)
+            $used_item[] = ['id'=>$transfer->item->id,'name'=>$transfer->item->name];
+        }
+
+        $items = \App\Item::where('owner_user_id','=',$user->id)->get();
+        foreach ($items as $item){
+            $my_item[] = ['id'=>$item->id , 'name'=>$item->name] ;
+        }
+
+        $items = \App\Item::where('holder_user_id','=',$user->id)->get();
+        foreach ($items as $item){
+            $hold_item[] = ['id'=>$item->id , 'name'=>$item->name] ;
+        }
+
+
+        echo json_encode(['used'=>$used_item,'my'=>$my_item,'hold'=>$hold_item]);
+    }
+
     public function getRequest(Request $request){
         $openid = $request->session()->has('openid') ? $request->session()->get('openid') : '';
         $user = \App\User::findOpenid($openid);
@@ -62,14 +89,14 @@ class TransferController extends Controller
                     //申请已确认
                     if($transfer->from_user_id == $user->id){
                         //漂出人自己
-                        $state = '已取书，还书时间：' . $htime;
+                        $state = '已获得，归还时间：' . $htime;
                     }else{
 
                         if($item->owner_user_id == $user->id){
                             //自己是拥有者
                             $state = '确认归还';
                         }else{
-                            $state = '已取书，还书时间：' . $htime;
+                            $state = '已获得，归还时间：' . $htime;
                         }
                     }
                 }else{
@@ -133,7 +160,7 @@ class TransferController extends Controller
         if($item && $user){
             if($item->holder_user_id != $user->id){
                 if(strtotime($item->expired_at)>strtotime(date("y-m-d h:i:s"))){
-                    $transfer = \App\Transfer::where(['to_user_id'=>$user->id,'from_user_id'=>$item->holder_user_id])->latest()->first();
+                    $transfer = \App\Transfer::where(['to_user_id'=>$user->id,'from_user_id'=>$item->holder_user_id,'accept'=>0])->latest()->first();
                     if(!$transfer){
                         $transfer = new \App\Transfer;
                     }
@@ -149,7 +176,7 @@ class TransferController extends Controller
                 }
                 
             }else{
-                echo json_encode(['msg'=>'已经拥有本书']);
+                echo json_encode(['msg'=>'已经拥有']);
             }
             
         }
@@ -217,10 +244,10 @@ class TransferController extends Controller
                 //当前用户不是拥有者
                 if(boolval($item->transfer)){
                     //允许多次漂流
-                    $transfer = \App\Transfer::where('from_user_id','=',$item->holder_user_id)->where('to_user_id','=',$user->id)->first();
+                    $transfer = \App\Transfer::where('from_user_id','=',$item->holder_user_id)->where('to_user_id','=',$user->id)->where('accept','=','0')->first();
                 }else{
                     if($item->holder_user_id == $item->owner_user_id){
-                        $transfer = \App\Transfer::where('from_user_id','=',$item->holder_user_id)->where('to_user_id','=',$user->id)->first();
+                        $transfer = \App\Transfer::where('from_user_id','=',$item->holder_user_id)->where('to_user_id','=',$user->id)->where('accept','=','0')->first();
                     }
                 }
 

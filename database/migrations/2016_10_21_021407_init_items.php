@@ -24,8 +24,8 @@ class InitItems extends Migration
             $table->boolean('shelves');
             $table->string('code');
             $table->timestamps();
-            $table->foreign('owner_user_id')->references('id')->on('users');
-            $table->foreign('holder_user_id')->references('id')->on('users');
+            // $table->foreign('owner_user_id')->references('id')->on('users');
+            // $table->foreign('holder_user_id')->references('id')->on('users');
         });
     }
 

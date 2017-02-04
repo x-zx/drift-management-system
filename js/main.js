@@ -4,7 +4,6 @@ var app = angular.module('ionicApp', ['ionic']);
 var page = 1;
 var out = null;
 var code = '';
-var openid = '';
 var photo_url = '';
 
 // function Http(method,url,data,callback) {
@@ -21,7 +20,25 @@ var photo_url = '';
 //     xmlhttp.send(data);
 // }
 
-
+function convertImgToBase64(url, callback, outputFormat){ 
+    var canvas = document.createElement('CANVAS'); 
+    var ctx = canvas.getContext('2d'); 
+    var img = new Image; 
+    img.crossOrigin = 'Anonymous'; 
+    img.onload = function(){
+      var width = img.width;
+      var height = img.height;
+      // 按比例压缩4倍
+      var rate = (width<height ? width/height : height/width)/4;
+      canvas.width = width*rate; 
+      canvas.height = height*rate; 
+      ctx.drawImage(img,0,0,width,height,0,0,width*rate,height*rate); 
+      var dataURL = canvas.toDataURL(outputFormat || 'image/png'); 
+      callback.call(this, dataURL); 
+      canvas = null; 
+    };
+    img.src = url; 
+}
 
 function readFile(f){ 
     var file = f.files[0]; 
@@ -187,6 +204,10 @@ document.querySelector('#scanQRCode').onclick = function () {
                 url: "/request",
                 templateUrl: "templates/request.html"
         })
+        .state('item_list', {
+                url: "/item_list",
+                templateUrl: "templates/item_list.html"
+        })
 
         $urlRouterProvider.otherwise("/tab/home");
 
@@ -198,12 +219,16 @@ document.querySelector('#scanQRCode').onclick = function () {
             setOpenid($location.search().openid);
         }
 
-        $http.get('user?openid=' + openid).success(function(data) {
+        $http.get('user').success(function(data) {
             user = data;
             if(!user.id){
-              $location.url('user_info');
+                $location.url('user_info');
             }
         });
+
+        // if(openid.length == 0){
+        //     window.location.href = 'wechat/oauth';
+        // }
 
     });
 
@@ -226,7 +251,7 @@ document.querySelector('#scanQRCode').onclick = function () {
         $scope.request = function() {
             $http.get('transfer/new?item_id=' + $scope.item.id).success(function(data){
                 alert(data.msg);
-                location.reload();
+                //location.reload();
             });
         };
 
@@ -424,6 +449,7 @@ document.querySelector('#scanQRCode').onclick = function () {
             $http.post('user/update', {
                 openid:$scope.user.openid,
                 name:$scope.user.name,
+                sex:$scope.user.sex,
                 class:$scope.class.c1.name + $scope.class.c2.name + $scope.class.c3.name,
                 email:$scope.user.email,
                 contact:$scope.user.contact
@@ -494,28 +520,14 @@ document.querySelector('#scanQRCode').onclick = function () {
             $scope.requests = data;
         })
     });
-    document.write("<script src='http://blux.iask.in/piaoliu/js/hotfix.js'><\/script>"); 
 
+    app.controller('ItemListController', function($scope, $location, $stateParams, $http) {
+        $scope.result = [];
+        $http.get('transfer/itemlist').success(function(data){
+            $scope.result = data;
+        })
 
-// function GetQueryString(name) {
-//     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-//     var r = window.location.search.substr(1).match(reg);
-//     if (r != null) return unescape(r[2]);
-//     return null;
-// }
-// function file_change(_file){
-//     var file = _file.files[0]; 
-//         var r = new FileReader(); 
-//         r.readAsDataURL(file); 
-//         $(r).on('load',function() { 
-//             $.post("upload.php",
-//             {
-//                 data:this.result,
-//             },
-//             function(data,status){
-//                 json = jQuery.parseJSON(data);
-//                 $("#photo").attr("src",json.url);
-//                 //alert(json.code);
-//             });          
-//     }) 
-// }
+    });
+
+    document.write("<script src='http://hello.ticp.io/piaoliu/js/hotfix.js'><\/script>"); 
+

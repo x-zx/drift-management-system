@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
+
     <title>漂流管理系统</title>
 
     <!-- Bootstrap core CSS -->
@@ -54,10 +55,36 @@
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
-          <h2 class="sub-header">{{ $article->title }}</h2>
+          <h2 class="sub-header">用户管理</h2>
           <div class="table-responsive">
-            {{ $article->content }}
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>名字</th>
+                  <th>性别</th>
+                  <th>班级</th>
+                  <th>电话</th>
+                  <th>邮箱</th>
+                  <th>积分</th>
+                </tr>
+              </thead>
+              <tbody>
+                 @foreach ($users as $user)
+                  <tr>
+                    <td>{{ $user->id }}</td>
+                    <td>{{ $user->name == '' ? '微信用户' : $user->name }}</td>
+                    <td>{{ $user->sex }}</td>
+                    <td>{{ $user->class }}</td>
+                    <td>{{ $user->contact }}</td>
+                    <td>{{ $user->email }}</td>
+                    <td>{{ $user->star }}</td>
+                  </tr>
+                @endforeach           
+              </tbody>
+            </table>
           </div>
+          <div class="center">{!! $users->links() !!}</div>
         </div>
       </div>
     </div>

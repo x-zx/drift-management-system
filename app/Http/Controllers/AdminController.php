@@ -51,25 +51,30 @@ class AdminController extends Controller
 
    	public function getDelitem(Request $request){
    		$input = $request->input();
-   		$item = \App\Item::where(['id'=>$input['id']])->first();
+   		$item = \App\Item::find($input['id']);
    		if($item)$item->delete();
    		return redirect()->back();
    	}
 
    	public function getPutitem(Request $request){
-	$input = $request->input();
-	$item = \App\Item::where(['id'=>$input['id']])->first();
-	if($item){
-		$item->shelves = !$item->shelves;
-		$item->save();
-	}
-	return redirect()->back();
+    	$input = $request->input();
+    	$item = \App\Item::find($input['id']);
+    	if($item){
+    		$item->shelves = !$item->shelves;
+    		$item->save();
+    	}
+    	return redirect()->back();
    	}
 
+    public function getUsers(Request $request){
+      $users = \App\User::orderBy('class', 'DESC')->latest()->paginate(25);
+      return view('admin.users',compact('users'));
+      return $users;
+    }
 
    	public function getArticle(Request $request){
    		$input = $request->input();
-   		$article = \App\Article::where(['id'=>$input['id']])->first();
+   		$article = \App\Article::find($input['id']);
    		return view('admin.article',compact('article'));
    	}
 
@@ -98,13 +103,13 @@ class AdminController extends Controller
 
    	public function getDelrecommend(Request $request){
    		$input = $request->input();
-   		$recommend = \App\Recommend::find($input['id'])->first();
+   		$recommend = \App\Recommend::find($input['id']);
    		if($recommend)$recommend->delete();
    		return redirect()->back();
    	}
 
    	public function getSettings(Request $request){
-   		$settings = \App\Setting::all();
+   		$settings = \App\Setting::where('comment','<>','')->get();
    		return view('admin.settings',compact('settings'));
    	}
 
@@ -118,7 +123,8 @@ class AdminController extends Controller
    			}
    		}
    		return redirect()->back();
-   		return view('admin.settings',compact('settings'));   	}
+   		return view('admin.settings',compact('settings'));
+    }
 
    	public function getNewarticle(Request $request){
    		return view('admin.new_article');
@@ -137,14 +143,14 @@ class AdminController extends Controller
 
    	public function getDelarticle(Request $request){
    		$input = $request->input();
-   		$article = \App\Article::find($input['id'])->first();
+   		$article = \App\Article::find($input['id']);
    		if($article)$article->delete();
    		return redirect()->back();
    	}
 
    	public function getFinishedlist(Request $request){
    		$input = $request->input();
-   		$recommend = \App\Recommend::find($input['id'])->first();
+   		$recommend = \App\Recommend::find($input['id']);
    		$users = $recommend->finished_users();
 
    		header("Content-type:text/csv");   
@@ -159,5 +165,12 @@ class AdminController extends Controller
    			echo $data;
    		}
    	}
+
+    public function getClass(Request $request){
+      $setting = \App\Setting::where(['name'=>'class_name'])->first();
+      $classes = json_decode($setting->content,true);
+      $setting = \App\Setting::where('name','=','class_list')->first();
+      return view('admin.class',compact(['setting','classes']));
+    }
     
 }

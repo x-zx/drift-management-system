@@ -30,7 +30,7 @@ class User extends Model
     }
 
     public static function findOpenid($openid){
-        return User::where('openid','=',$openid)->first();
+        return User::where('openid','=',$openid)->where('openid','<>','')->first();
     }
 
     public function setAgentAttribute($agent){

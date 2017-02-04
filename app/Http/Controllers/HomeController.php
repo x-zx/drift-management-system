@@ -9,12 +9,18 @@ use App\Http\Requests;
 
 class HomeController extends Controller
 {
-    public function getIndex(){
-    	//$id = 1;//session('user_id');
-        //$recommends = \App\Recommend::latest()->limit(5)->get();
-        //$articles = \App\Article::where(['class'=>'notice'])->latest()->limit(5)->get();
-        //$user = \App\User::find($id);
-        return view('index',compact([]));
+    public function getIndex(Request $request){
+        $banner_src = \App\Setting::where(['name'=>'banner_src'])->first()->content;
+        //$banner_url = \App\Setting::where(['name'=>'banner_url'])->first()->content;
+        $setting = \App\Setting::where(['name'=>'class_name'])->first();
+        $classes = json_decode($setting->content,true);
+        $openid = $request->session()->get('openid');
+        if(empty($openid)){
+        	header("location:wechat/oauth");
+        	exit();
+        }else{
+        	return view('index',compact(['classes','banner_src','banner_url','openid']));
+        }
     }
 
     public function getList(){

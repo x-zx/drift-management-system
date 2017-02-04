@@ -48,6 +48,7 @@ class UserController extends Controller
         $user = \App\User::findOpenid($openid);
         if($user){
             $user->name = $input['name'];
+            $user->sex = $input['sex'];
             $user->class = $input['class'];
             $user->email = $input['email'];
             $user->contact = $input['contact'];

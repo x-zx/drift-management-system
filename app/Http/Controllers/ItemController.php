@@ -59,6 +59,18 @@ class ItemController extends Controller
         echo json_encode(['msg'=>$msg]);
     }
 
+    public function getQrcode(Request $request,$id){
+        $openid = $request->session()->get('openid');
+        $user = \App\User::findOpenid($openid);
+        $item = \App\Item::find($id);
+        if($user && $item->owner_user_id == $user->id){
+            header("location:http://qr.liantu.com/api.php?text={$item->code}");
+            exit();
+        }else{
+            echo "<script>alert('主人才可以获取二维码');window.close();window.location.href = '../../';</script>";
+        }
+    }
+
     public function postPost(Request $request){
         $openid = $request->session()->get('openid');
         $user = \App\User::findOpenid($openid);
@@ -67,7 +79,7 @@ class ItemController extends Controller
         $item->name = $input['name'];
         $item->des = $input['des'];
         if(empty($input['photo'])){
-            $imgs = ['img/Blue_Book.png','img/Brown_Book.png','img/Green_Book.png','img/Red_Book.png'];
+            $imgs = ['img/box.png'];
             $index = array_rand($imgs,1);
             $item->photo = $imgs[$index];
         }else{
@@ -77,6 +89,7 @@ class ItemController extends Controller
         $item->transfer = boolval($input['transfer']) ? 1 : 0;
         $item->holder_user_id = $user->id;
         $item->owner_user_id = $user->id;
+        $item->shelves = true;
         $item->code = md5($user->id . uniqid());
         $item->expired_at = date("Y-m-d H:i:s",strtotime("+1 month"));
         $item->save();

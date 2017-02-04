@@ -3,11 +3,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-    <title>首页</title>
+    <title> </title>
     <link href="css/ionic.min.css" rel="stylesheet">
     <script src="js/ionic.bundle.min.js"></script>
     <script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
-    <script src="http://www.yun-li.com/wx/js.config.php"></script>
+    <script src="wechat/js.config.php"></script>
+    <script>
+        openid = '{{$openid}}';
+    </script>
     <script src="js/main.js"></script>
 
     <style>
@@ -29,7 +32,7 @@
             <ion-tab title="首页" icon="ion-home" href="#/tab/home">
                 <ion-nav-view name="home-tab"></ion-nav-view>
             </ion-tab>
-            <ion-tab title="找书" icon="ion-ios-book" href="#/tab/search">
+            <ion-tab title="探索" icon="ion-ios-search-strong" href="#/tab/search">
                 <ion-nav-view name="search-tab"></ion-nav-view>
             </ion-tab>
             <ion-tab title="我的" icon="ion-ios-person" href="#/tab/user">
@@ -43,13 +46,13 @@
                 <button id="scanQRCode" class="button icon-left ion-ios-barcode-outline button-block button-positive">漂流扫码</button>
                 <div class="list card" id="page2-card24">
                     <div class=" item item-image">
-                        <img src="img/banner.jpg" width="100%" height="200px" style="display: block; margin-left: auto; margin-right: auto;">
+                        <img src="{{$banner_src}}" width="100%" style="display: block; margin-left: auto; margin-right: auto;">
                     </div>
                     <ion-item class="item-divider item" id="page2-list-item-divider4"> 最新动态</ion-item>
                     <ion-list class="disable-user-behavior">
                         <div class="list">
                             <ion-item class="item" href="#article/@{{article.id}}" ng-repeat="article in home.articles">@{{article.title}}</ion-item>
-                            <ion-item class="item-divider item" id="page2-list-item-divider3"> 推荐书目</ion-item>
+                            <ion-item class="item-divider item" id="page2-list-item-divider3"> 推荐物品</ion-item>
                             <ion-item href="#/tab/search?keywords=@{{recommend.name}}" ng-repeat="recommend in home.recommends">@{{recommend.name}}</ion-item>
                         </div>
                     </ion-list>
@@ -59,11 +62,11 @@
     </script>
 
     <script id="templates/search.html" type="text/ng-template">
-        <ion-view view-title="找书" ng-controller="ItemsController">
+        <ion-view view-title="探索" ng-controller="ItemsController">
             <div class="bar bar-header item-input-inset" style="opacity:0.9">
                 <label class="item-input-wrapper">
                     <i class="icon ion-ios-search placeholder-icon"></i>
-                    <input id="keywords" type="search" placeholder="图书名称" ng-model="keywords">
+                    <input id="keywords" type="search" placeholder="物品名称" ng-model="keywords">
                 </label>
                 <button class="button button-positive" ng-click="search()">
                     搜索
@@ -120,7 +123,7 @@
                 <div class="list">
                     <ion-item class="item-thumbnail-left item">
                         <img ng-src="@{{item.photo}}">
-                        <h2>@{{item.name}}</h2>
+                        <h2>@{{item.name}} <a target="_blank" href="item/qrcode/@{{item.id}}"><i style="float:right" class="ion-qr-scanner"></i></a></h2>
                         <p> 主人：@{{item.user_name}}</p>
                         <p> 有效期：@{{item.date}}</p>
                     </ion-item>
@@ -133,7 +136,7 @@
             </div>
             <ion-list>
                 <div class="list">
-                    <ion-item class="item-divider item"> 读书心得</ion-item>
+                    <ion-item class="item-divider item"> 使用心得</ion-item>
                     <ion-list>
                         <div class="list" ng-repeat="article in item.articles">
                             <ion-item class="item" href="#article/@{{article.id}}">@{{article.title}}</ion-item>
@@ -148,7 +151,7 @@
                 </div>
             </ion-list>
           
-            <button class="button button-positive  button-block" ng-click="request()">申请借书</button>
+            <button class="button button-positive  button-block" ng-click="request()">申请漂流</button>
 
              <div class="button-bar bar-clear">
            <a class="button button-clear button-positive" href="#/post/@{{item.id}}">分享心得</a>
@@ -166,10 +169,36 @@
                         <input id="name" ng-model="user.name" type="text" placeholder="名字">
                     </label>
 
+                 <!--    <label class="item item-input">
+                        <input id="name" ng-model="class.c1.name" type="text" placeholder="学校">
+                    </label>
+
+                    <label class="item item-input">
+                        <input id="name" ng-model="class.c2.name" type="text" placeholder="年级">
+                    </label>
+
+                    <label class="item item-input">
+                        <input id="name" ng-model="class.c3.name" type="text" placeholder="班级">
+                    </label>
+ -->
+
+
+  <div class="item item-input item-select">
+
+    <div class="input-label">
+      性别
+    </div>
+    <select ng-model="user.sex">
+    <option value="男">男</option>
+    <option value="女">女</option>
+    </select>
+  </div>
+
+
    <div class="item item-input item-select">
 
     <div class="input-label">
-      学校
+      {{ $classes[0] }}
     </div>
     <select ng-model="class.c1.code" ng-change="classChange()" ng-options="c1.code as c1.name for c1 in class.list.c1">
     </select>
@@ -178,7 +207,7 @@
    <div class="item item-input item-select">
 
     <div class="input-label">
-      年级
+      {{ $classes[1] }}
     </div>
     <select ng-model="class.c2.code" ng-change="classChange()" ng-options="c2.code as c2.name for c2 in class.list.c2">
     </select>
@@ -187,17 +216,12 @@
      <div class="item item-input item-select">
 
     <div class="input-label">
-      班级
+      {{ $classes[2] }}
     </div>
     <select ng-model="class.c3.code" ng-change="classChange()" ng-options="c3.code as c3.name for c3 in class.list.c3">
     </select>
   </div>
 
-
-
-           <!--          <label class="item item-input">
-                        <input id="class" ng-model="user.class" type="text" placeholder="班级">
-                    </label> -->
                     <label class="item item-input">
                         <input id="email" ng-model="user.email" type="text" placeholder="邮箱">
                     </label>
@@ -210,11 +234,11 @@
         </ion-view>
     </script>
     <script id="templates/search.html" type="text/ng-template">
-        <ion-view view-title="找书" ng-controller="ItemsController">
+        <ion-view view-title="探索" ng-controller="ItemsController">
             <div class="bar bar-header item-input-inset" style="opacity:0.9">
                 <label class="item-input-wrapper">
                     <i class="icon ion-ios-search placeholder-icon"></i>
-                    <input id="keywords" type="search" placeholder="图书名称" ng-model="keywords">
+                    <input id="keywords" type="search" placeholder="物品名称" ng-model="keywords">
                 </label>
                 <button class="button button-positive" ng-click="search()">
                     搜索
@@ -238,7 +262,7 @@
                 <div>
                     <form class="list ng-pristine ng-valid">
                         <label class="item item-input">
-                            <span class="input-label" aria-label="书名">书名</span>
+                            <span class="input-label" aria-label="名称">名称</span>
                             <input id="name" ng-model="item.name" type="text" placeholder="">
                         </label>
                         <div onclick="file.click()" style="margin: 0px;  background-color: rgb(232, 235, 239); text-align: center;">
@@ -272,7 +296,7 @@
     <script id="templates/user.html" type="text/ng-template">
         <ion-view title="用户" ng-controller="UserController">
             <ion-content class="padding">
-            <a ng-show="hasRequest" class="button button-stable button-small button-block icon-left ion-android-notifications" href="#/request">查看借阅申请</a>
+            <a ng-show="hasRequest" class="button button-stable button-small button-block icon-left ion-android-notifications" href="#/request">查看漂流申请</a>
                 <div class="list card">
                 
 
@@ -286,13 +310,17 @@
                     <ion-item class="item-icon-left item">
                         <i class="icon ion-android-star"></i>已经获得 @{{user.star}} 颗星</ion-item>
                     <ion-item class="item-icon-left item item-complex" href="#/tab/search?user=@{{user.id}}">
-                        <i class="icon ion-ios-book"></i>岛内有 @{{user.item_num}} 本书</ion-item>
+                        <i class="icon ion-ios-book"></i>持有 @{{user.item_num}} 件物品</ion-item>
                     <ion-item class="item-icon-left item" href="#/articles/@{{user.id}}">
-                        <i class="icon ion-ios-bookmarks"></i>发布了 @{{user.article_num}} 篇读书心得</ion-item>
+                        <i class="icon ion-ios-bookmarks"></i>发布了 @{{user.article_num}} 篇使用心得</ion-item>
 
                 </div>
-                <a href="#/item_edit" class="button icon-left ion-android-add-circle button-block button-positive">发布图书</a>
-                <a class="button button-positive  button-block button-clear" href="javascript:location.reload()">刷新</a>
+                <a href="#/item_edit" class="button icon-left ion-android-add-circle button-block button-positive">发布物品</a>
+                <div class="button-bar bar-clear">
+               <a class="button button-clear button-positive" href="#/item_list">漂流清单</a>
+               <a class="button button-positive  button-block button-clear" href="javascript:location.reload()">刷新</a>
+               </div>
+                
             </ion-content>
         </ion-view>
     </script>
@@ -320,6 +348,31 @@
                   <!-- <p ng-if="request.accept">有效期：@{{request.item.htime}}</p> -->
                   <p>@{{request.state}}</p>
                   
+                </a>
+            </div>
+        </ion-view>
+    </script>
+
+    <script id="templates/item_list.html" type="text/ng-template">
+        <ion-view title="漂流清单" ng-controller="ItemListController">
+            <div class="list">
+                <div class="item item-divider">
+                  我的
+                </div>
+                <a class="item" ng-repeat="my in result.my" href="#/item/@{{my.id}}">
+                  @{{my.name}}
+                </a>
+                <div class="item item-divider">
+                  持有的
+                </div>
+                <a class="item" ng-repeat="hold in result.hold" href="#/item/@{{hold.id}}">
+                  @{{hold.name}}
+                </a>
+                <div class="item item-divider">
+                  用过的
+                </div>
+                <a class="item" ng-repeat="used in result.used" href="#/item/@{{used.id}}">
+                  @{{used.name}}
                 </a>
             </div>
         </ion-view>

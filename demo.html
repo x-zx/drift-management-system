@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
+
     <title>漂流管理系统</title>
 
     <!-- Bootstrap core CSS -->
@@ -42,7 +43,7 @@
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
-            <li><a href="items">物品管理</a></li>
+            <li><a href="items">项目管理</a></li>
             <li><a href="users">用户管理</a></li>
             <li><a href="articles">文章管理</a></li>
             <li><a href="recommends">推荐管理</a></li>
@@ -54,9 +55,28 @@
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
-          <h2 class="sub-header">{{ $article->title }}</h2>
+          <h2 class="sub-header">Section title</h2>
           <div class="table-responsive">
-            {{ $article->content }}
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Header</th>
+                  <th>Header</th>
+                  <th>Header</th>
+                  <th>Header</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1,001</td>
+                  <td>Lorem</td>
+                  <td>ipsum</td>
+                  <td>dolor</td>
+                  <td>sit</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

@@ -19,19 +19,30 @@ class DatabaseSeeder extends Seeder
             ],
             [
             'name'=>'admin_password',
-            'content'=>Hash::make('admin'),
+            'content'=>'admin',
             'comment'=>'管理员密码'
             ],
             [
-            'name'=>'home_banner_pic',
-            'content'=>'img\santi.jpg',
-            'comment'=>'首页横幅图片地址'
+            'name'=>'banner_src',
+            'content'=>'img\banner.jpg',
+            'comment'=>'横幅图片地址'
             ],
             [
-            'name'=>'home_banner_url',
-            'content'=>'img\santi.jpg',
-            'comment'=>'首页横幅图片链接'
+            'name'=>'class_list',
+            'content'=>'[]',
+            'comment'=>''
             ],
+            [
+            'name'=>'class_name',
+            'content'=>'["省份","城市","区县"]',
+            'comment'=>''
+            ]
         ]);
+
+
+        DB::table('users')->insert([
+            ['id'=>'1','name'=>'管理员']
+        ]);
+
     }
 }
